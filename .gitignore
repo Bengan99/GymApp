@@ -16,3 +16,6 @@
 
 # Visual Studio
 .vs/
+
+# C# Dev Kit cache
+**/*.lscache
