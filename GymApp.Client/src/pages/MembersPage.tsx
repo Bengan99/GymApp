@@ -29,6 +29,16 @@ function MembersPage() {
         }
     }
 
+    const handleDelete = async (id: number) => {
+        if (!window.confirm('Da li ste sigurni da želite da obrišete ovog člana?')) return;
+        try {
+            await memberService.delete(id)
+            loadMembers()
+        } catch {
+            setError('Greška pri brisanju člana')
+        }
+    }
+
     if (loading) return <p>Učitavanje...</p>
     if (error) return <p>{error}</p>
 
@@ -36,7 +46,7 @@ function MembersPage() {
         <div>
             <h1>Članovi</h1>
             <MemberForm onMemberCreated={handleMemberCreated} />
-            <MembersTable members={members} />
+            <MembersTable members={members} onDelete={handleDelete} />
         </div>
     )
 }
