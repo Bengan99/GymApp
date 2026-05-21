@@ -8,6 +8,7 @@ function MembersPage() {
     const [members, setMembers] = useState<Member[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [editingMember, setEditingMember] = useState<Member | null>(null)
 
     const loadMembers = () => {
         memberService.getAll()
@@ -29,8 +30,18 @@ function MembersPage() {
         }
     }
 
+    const handleMemberUpdated = async (id: number, updatedMember: CreateMember) => {
+        try {
+            await memberService.update(id, updatedMember)
+            setEditingMember(null)
+            loadMembers()
+        } catch {
+            setError('Greška pri editovanju člana')
+        }
+    }
+
     const handleDelete = async (id: number) => {
-        if (!window.confirm('Da li ste sigurni da želite da obrišete ovog člana?')) return;
+        if (!window.confirm('Da li si siguran da želiš obrisati ovog člana?')) return
         try {
             await memberService.delete(id)
             loadMembers()
@@ -45,8 +56,18 @@ function MembersPage() {
     return (
         <div>
             <h1>Članovi</h1>
-            <MemberForm onMemberCreated={handleMemberCreated} />
-            <MembersTable members={members} onDelete={handleDelete} />
+            <MemberForm
+                key={editingMember?.id ?? 'new'}
+                onMemberCreated={handleMemberCreated}
+                onMemberUpdated={handleMemberUpdated}
+                editingMember={editingMember}
+                onCancelEdit={() => setEditingMember(null)}
+            />
+            <MembersTable
+                members={members}
+                onDelete={handleDelete}
+                onEdit={setEditingMember}
+            />
         </div>
     )
 }

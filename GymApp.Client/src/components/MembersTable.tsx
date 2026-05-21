@@ -3,9 +3,10 @@ import type { Member } from "../types/member";
 interface Props {
     members: Member[];
     onDelete: (id: number) => void;
+    onEdit: (member: Member) => void;
 }
 
-function MembersTable({ members, onDelete }: Props) {
+function MembersTable({ members, onDelete, onEdit }: Props) {
     if (members.length === 0) return <p>Nema clanova.</p>;
 
     return (
@@ -28,9 +29,10 @@ function MembersTable({ members, onDelete }: Props) {
                         <td>{member.lastName}</td>
                         <td>{member.email}</td>
                         <td>{member.phoneNumber}</td>
-                        <td>{new Date(member.memberSince).toLocaleDateString('sr-RS')}</td>
+                        <td>{new Date(member.memberSince + 'Z').toLocaleDateString('sr-RS')}</td>
                         <td>{member.isActive ? '✅' : '❌'}</td>
                         <td>
+                            <button onClick={() => onEdit(member)}>Izmeni</button>
                             <button onClick={() => onDelete(member.id)}>Obriši</button>
                         </td>
                     </tr>

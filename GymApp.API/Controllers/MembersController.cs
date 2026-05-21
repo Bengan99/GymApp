@@ -35,11 +35,12 @@ namespace GymApp.API.Controllers
             }));
         }
 
-        // GET: api/members/{id}
+        // GET: api/members/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MemberResponseDto>> GetById(int id)
         {
             var member = await _context.Members.FindAsync(id);
+
             if (member == null)
                 return NotFound();
 
@@ -64,9 +65,9 @@ namespace GymApp.API.Controllers
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
-                DateOfBirth = dto.DateOfBirth
+                PhoneNumber = dto.PhoneNumber
             };
+
             _context.Members.Add(member);
             await _context.SaveChangesAsync();
 
@@ -77,15 +78,17 @@ namespace GymApp.API.Controllers
                 LastName = member.LastName,
                 Email = member.Email,
                 PhoneNumber = member.PhoneNumber,
+                MemberSince = member.MemberSince,
                 IsActive = member.IsActive
             });
         }
 
-        //PUT: api/members/{id}
+        // PUT: api/members/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UpdateMemberDto dto)
         {
             var member = await _context.Members.FindAsync(id);
+
             if (member == null)
                 return NotFound();
 
@@ -95,14 +98,16 @@ namespace GymApp.API.Controllers
             member.IsActive = dto.IsActive;
 
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
-        // DELETE: api/members/{id}
+        // DELETE: api/members/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete (int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var member = await _context.Members.FindAsync(id);
+
             if (member == null)
                 return NotFound();
 

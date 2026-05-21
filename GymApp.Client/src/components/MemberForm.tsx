@@ -1,17 +1,20 @@
-import { useState } from "react";
-import type { CreateMember } from '../types/member'
+import { useState } from 'react'
+import type { CreateMember, Member } from '../types/member'
 
 interface Props {
-    onMemberCreated: (member: CreateMember) => void;
+    onMemberCreated: (member: CreateMember) => void
+    onMemberUpdated?: (id: number, member: CreateMember) => void
+    editingMember?: Member | null
+    onCancelEdit?: () => void
 }
 
-function MemberForm({ onMemberCreated }: Props) {
+function MemberForm({ onMemberCreated, onMemberUpdated, editingMember, onCancelEdit }: Props) {
     const [formData, setFormData] = useState<CreateMember>({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        dateOfBirth: ''
+        firstName: editingMember?.firstName ?? '',
+        lastName: editingMember?.lastName ?? '',
+        email: editingMember?.email ?? '',
+        phoneNumber: editingMember?.phoneNumber ?? '',
+        isActive: editingMember?.isActive ?? true
     })
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,21 +24,32 @@ function MemberForm({ onMemberCreated }: Props) {
         })
     }
 
+    const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.checked
+        })
+    }
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onMemberCreated(formData)
+        if (editingMember) {
+            onMemberUpdated?.(editingMember.id, formData)
+        } else {
+            onMemberCreated(formData)
+        }
         setFormData({
             firstName: '',
             lastName: '',
             email: '',
             phoneNumber: '',
-            dateOfBirth: ''
+            isActive: true
         })
     }
 
     return (
         <div>
-            <h2>Dodaj clana</h2>
+            <h2>{editingMember ? 'Uredi člana' : 'Dodaj člana'}</h2>
             <form onSubmit={handleSubmit}>
                 <input
                     name="firstName"
@@ -64,18 +78,26 @@ function MemberForm({ onMemberCreated }: Props) {
                     placeholder="Telefon"
                     value={formData.phoneNumber}
                     onChange={handleChange}
+                    required
                 />
-                <input
-                    name="dateOfBirth"
-                    type="date"
-                    placeholder="Datum rođenja"
-                    value={formData.dateOfBirth}
-                    onChange={handleChange}
-                />
-                <button type="submit">Dodaj clana</button>
+                <label>
+                    Aktivan član
+                    <input
+                        name="isActive"
+                        type="checkbox"
+                        checked={formData.isActive ?? true}
+                        onChange={handleCheckbox}
+                    />
+                </label>
+                <button type="submit">
+                    {editingMember ? 'Sačuvaj izmjene' : 'Dodaj člana'}
+                </button>
+                {editingMember && (
+                    <button type="button" onClick={onCancelEdit}>Otkaži</button>
+                )}
             </form>
         </div>
     )
 }
 
-export default MemberForm;
+export default MemberForm

@@ -1,18 +1,17 @@
 export interface Member {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    memberSince: string;
-    isActive: boolean;
+    id: number
+    firstName: string
+    lastName: string
+    email: string
+    phoneNumber: string
+    memberSince: string
+    isActive: boolean
 }
 
 export interface CreateMember {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    dateOfBirth: string;
+    firstName: string
+    lastName: string
+    email: string
+    phoneNumber: string
+    isActive?: boolean
 }
-
